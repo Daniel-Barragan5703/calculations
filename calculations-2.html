@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Calculating Federal Taxes</title>
+    <link rel="stylesheet" href="calculations.css">
+</head>
+
+<body>
+    <h1 id="output"> Federal taxes </h1>  
+    <input type="number" id="salaryInput" placeholder="Enter Salary">
+    <button id="calculateButton">Calculate Taxes</button>
+    <table id="resultsTable">
+        <tr>
+            <th>Taxes Paid</th>
+            <th>Effective Tax Rate</th>
+            <th>Net Annual Income</th>
+            <th>Net Monthly Income</th>
+        </tr>
+        <tr>
+            <td id="taxesPaid"></td>
+            <td id="effectiveTaxRate"></td>
+            <td id="netAnnualIncome"></td>
+            <td id="netMonthlyIncome"></td>
+        </tr>
+
+    </table>
+     <script>
+const TAX_RATES = [
+    { min: 0, max: 11000, rate: 0.1 },
+    { min: 11001, max: 44726, rate: 0.12 },
+    { min: 44727, max: 95376, rate: 0.22 },
+    { min: 95377, max: 182101, rate: 0.24 },
+    { min: 182102, max: 231251, rate: 0.32 },
+    { min: 231252, max: 578126, rate: 0.35 },
+    { min: 578127, max: Infinity, rate: 0.37 },
+];
+
+document.getElementById('calculateButton').addEventListener('click', function() {
+    var salary = document.getElementById('salaryInput').value;
+    updateResults(salary);
+}); 
+        function updateResults(salary) {
+    var taxesPaid = calculateTax(salary);
+    var effectiveTaxRate = (taxesPaid / salary) * 100;
+    var netAnnualIncome = salary - taxesPaid;
+    var netMonthlyIncome = netAnnualIncome / 12;
+
+    document.getElementById('taxesPaid').textContent = '$' + taxesPaid.toFixed(2);
+    document.getElementById('effectiveTaxRate').textContent = effectiveTaxRate.toFixed(2) + '%';
+    document.getElementById('netAnnualIncome').textContent = '$' + netAnnualIncome.toFixed(2);
+    document.getElementById('netMonthlyIncome').textContent = '$' + netMonthlyIncome.toFixed(2);
+        }
+
+function calculateTax(income) {
+    var taxAmount = 0;
+
+    TAX_RATES.forEach(function(bracket) {
+        if (income > bracket.min) {
+            var bracketIncome = Math.min(income, bracket.max) - bracket.min;
+            taxAmount += bracketIncome * bracket.rate;
+            income -= bracketIncome;
+        }
+    });
+
+    return taxAmount;
+}
+
+        </script>
+</body>
+</html>
